@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<LangVersion>preview</LangVersion>
+		<TargetFrameworks>net472</TargetFrameworks>
+		<NoWarn>$(NoWarn);CS0436</NoWarn>
+		<RunPostBuildEvent>Always</RunPostBuildEvent>
+		<Nullable>annotations</Nullable>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="lib\**" />
+	  <EmbeddedResource Remove="lib\**" />
+	  <None Remove="lib\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="RocketMod.Modern.Dependencies" Version="1.*-*" />
+		<PackageReference Include="RocketMod.Modern.Generator" Version="1.*-*" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Unity.TextMeshPro" HintPath="lib\Unity.TextMeshPro.dll" />
+	</ItemGroup>
+</Project>
