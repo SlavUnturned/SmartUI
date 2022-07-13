@@ -27,7 +27,7 @@ public class Progress : Element
     {
         if (Value == value || value < 0) return;
         PreviousValue = Value;
-        Value = Mathf.Clamp(Value, (int)MinValue, (int)MaxValue);
+        Value = Mathf.Clamp(value, (int)MinValue, (int)MaxValue);
         UpdateCount(connection, uiKey);
     }
     
