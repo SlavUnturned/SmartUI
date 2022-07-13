@@ -2,23 +2,21 @@
 
 public class Progress : Element
 {
-    public Progress(object name, int minValue = 0, int maxValue = 100) : base(name)
+    public Progress(object name, uint minValue = 0, uint maxValue = 100) : base(name)
     {
         MinValue = minValue;
         MaxValue = maxValue;
     }
 
     public virtual int Value { get; set; }
-    public virtual int MinValue { get; set; }
-    public virtual int MaxValue { get; set; }
+    public virtual int PreviousValue { get; protected set; } = -1;
+    public virtual uint MinValue { get; set; }
+    public virtual uint MaxValue { get; set; }
     public virtual bool Reliable { get; set; } = true;
     public TimeSince LastProgressUpdate { get; internal set; }
     
-    private int previous;
+    public virtual string FormatName(int value) => $"{Name}_{value}";
 
-    public sealed override string ToString() => $"{Name}_{Value}";
-    private string PreviousToString() => $"{Name}_{previous}";
-    
     public override void UpdateState(UIController controller)
     {
         base.UpdateState(controller);
@@ -27,18 +25,23 @@ public class Progress : Element
 
     public void UpdateCount(int value, ITransportConnection connection, short uiKey)
     {
-        if (Value == value) return;
-        previous = Value;
-        Value = Mathf.Clamp(Value, MinValue, MaxValue);
+        if (Value == value || value < 0) return;
+        PreviousValue = Value;
+        Value = Mathf.Clamp(Value, (int)MinValue, (int)MaxValue);
         UpdateCount(connection, uiKey);
     }
     
     public void UpdateCount(ITransportConnection connection, short uiKey)
     {
-        if (previous != MinValue)
-            EffectManager.sendUIEffectVisibility(uiKey, connection, Reliable, PreviousToString(), false);
-        EffectManager.sendUIEffectVisibility(uiKey, connection, Reliable, ToString(), true);
+        UpdateElementVisibility(connection, uiKey, PreviousValue, false);
+        UpdateElementVisibility(connection, uiKey, Value, true);
         LastProgressUpdate = TimeSince.Now;
+    }
+
+    private void UpdateElementVisibility(ITransportConnection connection, short uiKey, int value, bool visible)
+    {
+        if (value < 0) return;
+        EffectManager.sendUIEffectVisibility(uiKey, connection, Reliable, FormatName(value), visible);
     }
     
     public void UpdateCount(UIController controller, int value) => UpdateCount(value, controller.Connection, controller.Key);
