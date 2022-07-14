@@ -2,20 +2,21 @@
 
 public class Progress : Element
 {
-    public Progress(object name, uint minValue = 0, uint maxValue = 100) : base(name)
+    public Progress(object name, uint value = 100, uint minValue = 0, uint maxValue = 100) : base(name)
     {
+        Value = value;
         MinValue = minValue;
         MaxValue = maxValue;
     }
 
-    public virtual int Value { get; set; }
-    public virtual int PreviousValue { get; protected set; } = -1;
+    public virtual uint Value { get; protected set; }
+    public virtual uint? PreviousValue { get; protected set; }
     public virtual uint MinValue { get; set; }
     public virtual uint MaxValue { get; set; }
     public virtual bool Reliable { get; set; } = true;
     public TimeSince LastProgressUpdate { get; internal set; }
     
-    public virtual string FormatName(int value) => $"{Name}_{value}";
+    public virtual string FormatName(uint value) => $"{Name}_{value}";
 
     public override void UpdateState(UIController controller)
     {
@@ -27,7 +28,7 @@ public class Progress : Element
     {
         if (Value == value || value < 0) return;
         PreviousValue = Value;
-        Value = Mathf.Clamp(value, (int)MinValue, (int)MaxValue);
+        Value = (uint)Mathf.Clamp(value, MinValue, MaxValue);
         UpdateCount(connection, uiKey);
     }
     
@@ -38,10 +39,10 @@ public class Progress : Element
         LastProgressUpdate = TimeSince.Now;
     }
 
-    private void UpdateElementVisibility(ITransportConnection connection, short uiKey, int value, bool visible)
+    private void UpdateElementVisibility(ITransportConnection connection, short uiKey, uint? value, bool visible)
     {
-        if (value < 0) return;
-        EffectManager.sendUIEffectVisibility(uiKey, connection, Reliable, FormatName(value), visible);
+        if (value is <= 0) return;
+        EffectManager.sendUIEffectVisibility(uiKey, connection, Reliable, FormatName(value.Value), visible);
     }
     
     public void UpdateCount(UIController controller, int value) => UpdateCount(value, controller.Connection, controller.Key);
