@@ -54,7 +54,13 @@ public abstract class UIController : UnturnedPlayerComponent
         foreach (var element in ElementsList)
             element.UpdateState(this);
     }
-    public void ApplyWidgets(bool state) => Player.setPluginWidgetFlag(Widgets, state);
+    public virtual void ApplyWidgets(bool state) => ApplyWidgets(Widgets, state);
+    public void ToggleLifeMeters(bool state) => ApplyWidgets(EPluginWidgetFlags.ShowLifeMeters, state);
+    public void ApplyWidgets(EPluginWidgetFlags flags, bool state)
+    {
+        foreach (var flag in flags.GetFlags())
+            Player.setPluginWidgetFlag(flag, state);
+    }
     public virtual Task OnStateUpdating() => Task.CompletedTask;
     public virtual Task OnStateUpdated() => Task.CompletedTask;
     public virtual Task OnTextFieldCommited(string name, string text) => Task.CompletedTask;

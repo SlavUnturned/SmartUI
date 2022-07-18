@@ -56,6 +56,7 @@ namespace SmartUI;
 
 public static partial class Utils
 {
+    public static IEnumerable<T> GetFlags<T>(this T @enum) where T : Enum => Enum.GetValues(@enum.GetType()).Cast<T>().Where(t => @enum.HasFlag(t));
     public static bool SameAs(this string a, string b) => a.Equals(b, StringComparison.InvariantCulture);
 
     public static IEnumerable<int> TryGetIds(this string name, string format)
@@ -87,5 +88,4 @@ public static partial class Utils
             catch { }
     }
     public static T Get<T>(this Element element) where T : Element => element as T ?? (element?.Alias as T) ?? (element?.Alias?.Get<T>());
-
 }
