@@ -19,7 +19,7 @@ public class Text : Element
 
     public void UpdateText(ITransportConnection steamId, short uiKey, object newText, bool force = false)
     {
-        var newValue = newText.ToString();
+        var newValue = ""+newText;
         if (Value == newValue)
         {
             if (!force)
